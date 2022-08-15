@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  /* background-color: #3c431d; */
 }
 
 .App-logo {
@@ -35,4 +36,16 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.SubmissionForm div.input,
+.SubmissionForm textarea,
+.SubmissionForm div.dropdown {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.SubmissionForm h2 {
+  margin-top: 1em !important;
+  margin-bottom: 1em;
 }
