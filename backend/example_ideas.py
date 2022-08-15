@@ -13,15 +13,18 @@ def populate_ideas():
 
     idea1 = Idea(title="Make an ideas app",
                  description="Build a really simple app to collect innovative ideas from across the army",
-                 cams=1)
+                 cams=1,
+                 rating=5)
 
     idea2 = Idea(title="Learn node.js",
                  description="We're using flask, but maybe we want to use node.js instead?",
-                 cams=3)
+                 cams=3,
+                 rating=2)
 
     idea3 = Idea(title="Make a presentation",
                  description="Show the digital nexus team what we've built here",
-                 cams=5)
+                 cams=5,
+                 rating=4)
 
     session.add_all([idea1, idea2, idea3])
     session.commit()

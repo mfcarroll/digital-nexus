@@ -1,13 +1,13 @@
 import './App.css';
-import { Button, Container, Form, Input, Menu, MenuItem, Dropdown, TextArea, Header } from 'semantic-ui-react';
-import React, { useState, useEffect } from "react";
+import { Button, Container, Form, Input, Menu, MenuItem, Dropdown, TextArea, Header, GridColumn, Segment, Grid, Rating } from 'semantic-ui-react';
+import React from "react";
 /* import { render } from 'react-dom'; */
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleItemClick = this.handleItemClick.bind(this)
-    this.state = { activePage: 'about' }
+    this.state = { activePage: 'viewIdeas' }
   }
 
   handleItemClick = (e, { name }) => this.setState({ activePage: name })
@@ -20,7 +20,6 @@ class App extends React.Component {
           handleItemClick={this.handleItemClick}
         />
         <ShowActivePage activePage={this.state.activePage} />
-        <Test />
       </div>
     );
   }
@@ -102,46 +101,161 @@ class MainMenu extends React.Component {
 }
 
 class Ideas extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
+    };
+  }
+
+  componentDidMount() {
+    fetch("/ideas")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            ideas: result.ideas
+          });
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
   render() {
-    return (
-      <div className="Ideas">
-        <p>Showcase all the ideas</p>
-      </div>
-    );
+    const { error, isLoaded, ideas } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div></div>;
+    } else {
+      return (
+        <div className="Ideas">
+          <Container>
+            <Grid stackable columns={2}>
+              {ideas.map(idea => (
+                <GridColumn key={idea.id}>
+                  <Segment>
+                    <Header size='small'>{idea.title}</Header>
+                    <p>{idea.description}</p>
+                    <p><em>{options[idea.cams-1]['text']}</em></p>
+                    <Rating icon='star' defaultRating={idea.rating} maxRating={5} />
+                  </Segment>
+                </GridColumn>
+              ))}
+            </Grid>
+          </Container>
+        </div>
+      );
+    }
   }
 }
 
 const options = [
-  { key: 'angular', text: 'Angular', value: 'angular' },
-  { key: 'css', text: 'CSS', value: 'css' },
-  { key: 'design', text: 'Graphic Design', value: 'design' },
-  { key: 'ember', text: 'Ember', value: 'ember' },
-  { key: 'html', text: 'HTML', value: 'html' },
-  { key: 'ia', text: 'Information Architecture', value: 'ia' },
-  { key: 'javascript', text: 'Javascript', value: 'javascript' },
-  { key: 'mech', text: 'Mechanical Engineering', value: 'mech' },
-  { key: 'meteor', text: 'Meteor', value: 'meteor' },
-  { key: 'node', text: 'NodeJS', value: 'node' },
-  { key: 'plumbing', text: 'Plumbing', value: 'plumbing' },
-  { key: 'python', text: 'Python', value: 'python' },
-  { key: 'rails', text: 'Rails', value: 'rails' },
-  { key: 'react', text: 'React', value: 'react' },
-  { key: 'repair', text: 'Kitchen Repair', value: 'repair' },
-  { key: 'ruby', text: 'Ruby', value: 'ruby' },
-  { key: 'ui', text: 'UI Design', value: 'ui' },
-  { key: 'ux', text: 'User Experience', value: 'ux' },
+  { key: '1', text: 'CAMS Strategy Alpha', value: '1' },
+  { key: '2', text: 'CAMS Strategy Bravo', value: '2' },
+  { key: '3', text: 'CAMS Strategy Charlie', value: '3' },
+  { key: '4', text: 'CAMS Strategy Delta', value: '4' },
+  { key: '5', text: 'CAMS Strategy Echo', value: '5' },
+  { key: '6', text: 'CAMS Strategy Foxtrot', value: '6' },
+  { key: '7', text: 'CAMS Strategy Golf', value: '7' },
+  { key: '8', text: 'CAMS Strategy Hotel', value: '8' },
+  { key: '9', text: 'CAMS Strategy India', value: '9' },
+  { key: '10', text: 'CAMS Strategy Juliet', value: '10' },
 ]
 
+/* todo: load cams details from api */
+
+
 class SubmissionForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      title: "",
+      description: "",
+      cams: ""
+    }
+
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleDropDownSelect = this.handleDropDownSelect.bind(this)
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+    /* const value = target.type === 'checkbox' ? target.checked : target.value; */
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleDropDownSelect(event, data) {
+    const value = data.value;
+    const name = data.name;
+    console.log(name)
+    console.log(value)
+    this.setState({
+      [name]: value
+    });
+  }
+
+  handleSubmit(event) {
+    /* todo: switch to ajax submission */
+    /* event.preventDefault(); */
+  }
+
   render() {
     return (
       <Container>
         <div className="SubmissionForm">
-          <Header as='h2'>Help us find the best ideas</Header>
-          <Form className="ui form" action="/add" method="POST">
-            <Input type="text" name="title" placeholder="Title..." fluid={true} />
-            <TextArea name="description" placeholder="Tell us more about your idea..." rows={20} />
-            <Dropdown placeholder='Cams Priorities' fluid multiple search selection options={options} />
+          <Header as='h2'>Help us find the most innovative ideas to scale up across the army</Header>
+          <Form className="ui form" onSubmit={this.handleSubmit} action="/add" method="POST">
+            <label>Title</label>
+            <Input
+              type="text"
+              name="title"
+              placeholder="In a few words, what's your idea about?"
+              fluid={true}
+              value={this.state.title}
+              onChange={this.handleInputChange}
+            />
+
+            <label>Details</label>
+            <TextArea
+              name="description"
+              placeholder="Tell us more about your idea..."
+              rows={20}
+              value={this.state.description}
+              onChange={this.handleInputChange}
+            />
+
+            <label>CAMS Priority Area</label>
+            <Input type='hidden' name='cams' value={this.state.cams} />
+            <Dropdown
+              name='cams'
+              placeholder='Cams Priority'
+              fluid
+              search
+              selection
+              /* multiple */
+              options={options}
+              value={this.state.cams}
+              onChange={this.handleDropDownSelect}
+            />
+
             <Button className="ui blue button" type="submit">Submit</Button>
           </Form>
         </div>
@@ -154,7 +268,9 @@ class About extends React.Component {
   render() {
     return (
       <div className="About">
-        <p>About what we're doing</p>
+        <Container>
+        <Header size='medium'>About what we're doing</Header>
+        </Container>
       </div>
     );
   }
@@ -164,7 +280,9 @@ class Contact extends React.Component {
   render() {
     return (
       <div className="Contact">
-        <p>Contact info</p>
+        <Container>
+        <Header size='medium'>Contact info</Header>
+        </Container>
       </div>
     );
   }
@@ -174,38 +292,12 @@ class Login extends React.Component {
   render() {
     return (
       <div className="Login">
-        <p>Login</p>
+        <Container>
+        <Header size='medium'>Login</Header>
+        </Container>
       </div>
     );
   }
-}
-
-function Test() {
-  // usestate for setting a javascript
-  // object for storing and using data
-  const [data, setdata] = useState({
-    testing: "",
-  });
-
-  // Using useEffect for single rendering
-  useEffect(() => {
-    // Using fetch to fetch the api from
-    // flask server it will be redirected to proxy
-    fetch("/test").then((res) =>
-      res.json().then((data) => {
-        // Setting a data from api
-        setdata({
-          testing: data.testing,
-        });
-      })
-    );
-  }, []);
-
-  return (
-    <div className="Test">
-      <p>{data.testing}</p>
-    </div>
-  );
 }
 
 export default App;

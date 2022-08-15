@@ -19,10 +19,10 @@ class Idea(Base):
     description = Column(String(1000))
     cams = Column(Integer, ForeignKey("cams.id"), nullable=False)
     priority = Column(Integer)
-    likes = Column(Integer)
+    rating = Column(Integer)
 
     def __repr__(self):
-        return f"Idea({self.id=!r}, {self.title=!r}, {self.description=!r}, {self.cams=!r}, {self.priority=!r}, {self.likes=!r})"
+        return f"Idea({self.id=!r}, {self.title=!r}, {self.description=!r}, {self.cams=!r}, {self.priority=!r}, {self.rating=!r})"
 
     @property
     def serialize(self):
@@ -32,7 +32,7 @@ class Idea(Base):
             'description': self.description,
             'cams': self.cams,
             'priority': self.priority,
-            'likes': self.likes
+            'rating': self.rating
         }
 
 

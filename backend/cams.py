@@ -9,7 +9,7 @@ def populate_cams():
     session.query(Cams).delete()
     session.commit()
 
-    for i in range(1,11):
+    for i in ['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot','Golf','Hotel','India','Juliet']:
         new_cams = Cams(name = f"CAMS Strategy {i}")
         session.add(new_cams)
         session.commit()

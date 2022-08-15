@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 import database
 from database import *
 database.init_db()
@@ -10,13 +10,17 @@ def serialize(results):
 
 @app.route('/ideas')
 def ideas():
-    ideas_list = session.execute(select(Idea)).scalars().all()
-    return jsonify(serialize(ideas_list))
+    ideas_list = {
+        'ideas': serialize(session.execute(select(Idea)).scalars().all())
+    }
+    return jsonify(ideas_list)
 
 @app.route('/cams')
 def cams():
-    cams_list = session.execute(select(Cams)).scalars().all()
-    return jsonify(serialize(cams_list))
+    cams_list = {
+        'cams': serialize(session.execute(select(Cams)).scalars().all())
+    }
+    return jsonify(cams_list)
 
 @app.route("/add", methods=["POST"])
 def add_idea():
@@ -39,7 +43,8 @@ def add_idea():
     if new_idea.title:
         session.add(new_idea)
         session.commit()
-        return 'OK', 200
+        return redirect('/')
+        # return 'OK', 200
     else:
         return 'Error. Idea not added.', 400
 
